@@ -1,0 +1,172 @@
+syntax = "proto3";
+//java
+option java_multiple_files = true;
+option java_package = "com.mingshuo.messerver.proto";
+option java_outer_classname = "TestpdsProto";
+//csharp
+//option csharp_namespace = "GrpcDemo.Service";
+package qms_testdata;
+
+service QMSTestpdsService {
+  rpc GetBaseInfoBySerialNo(GetBaseInfoBySerialNoRequest) returns (GetBaseInfoBySerialNoResponse);
+  // 1. 单个查询：按 ID 获取测试数据
+  rpc GetTestpdsById(GetTestpdsByIdRequest) returns (GetTestpdsByIdResponse);
+
+  // 2. 批量查询：分页获取测试数据（支持筛选）
+  //  rpc ListTestpds(ListTestpdsRequest) returns (ListTestpdsResponse);
+
+  // 3. 新增：创建测试数据（id 自增）
+  rpc CreateTestpds(CreateTestpdsRequest) returns (CommonResponse);
+
+  // 4. 更新：修改测试数据（按 id 定位）
+  rpc UpdateTestpds(UpdateTestpdsRequest) returns (CommonResponse);
+
+  // 5. 删除：删除测试数据（按 id 定位）
+  //  rpc DeleteTestpds(DeleteTestpdsRequest) returns (CommonResponse);
+
+  // 6. 可选：批量删除（根据业务需求扩展）
+  //  rpc BatchDeleteTestpds(stream DeleteTestpdsRequest) returns (CommonResponse);
+}
+
+message GetBaseInfoBySerialNoRequest {
+  string serialNo = 1;
+}
+
+message BaseInfo{
+  string serialNo = 1;
+  string contractNo = 2;
+  string cModel = 3;
+  string sensorSN = 4;
+  string mainBoardID = 5;
+  string itemID = 6;
+  string workSection = 7;
+  string factoryRange = 8;
+  string testRange = 9;
+  string maxWKPressure = 10;
+  string billNo = 11;
+  string accuracy = 12;
+}
+
+message GetBaseInfoBySerialNoResponse{
+  bool success = 1;          // 操作是否成功（true/false）
+  string message = 2;        // 提示信息（如成功/失败原因）
+  int32 code = 3;            // 状态码（如 200=成功，500=失败）
+  BaseInfo baseInfo = 4;
+}
+
+message GetTestpdsByIdResponse {
+  bool success = 1;          // 操作是否成功（true/false）
+  string message = 2;        // 提示信息（如成功/失败原因）
+  int32 code = 3;            // 状态码（如 200=成功，500=失败）
+  Testpds testpds = 4;
+}
+
+message CommonResponse {
+  bool success = 1;          // 操作是否成功（true/false）
+  string message = 2;        // 提示信息（如成功/失败原因）
+  int32 code = 3;            // 状态码（如 200=成功，500=失败）
+}
+
+message CreateTestpdsRequest{
+  Testpds testpds = 1; // 传入 Testpds 实体（id 字段会被忽略）
+}
+
+message UpdateTestpdsRequest {
+  Testpds testpds = 1; // 传入 Testpds 实体（id 字段必传）
+}
+
+message GetTestpdsByIdRequest {
+  int32 id = 1; // 传入 Testpds 实体（id 字段必传）
+}
+
+message TestpdsBaseInfo{
+  string serialNo = 1;
+}
+
+//创建订单请求参数
+message Testpds {
+  int32 id = 1;
+  // 基础标识字段
+  string serial_no = 2;  // 序列号 (FSerialNo)
+  string contract_no = 3;  // 合同编号 (FContractNo)
+  string contract_model = 4;  // 合同型号 (FContractmodel)
+  string sensor_no = 5;  // 传感器编号 (FSensorNo)
+  string main_board_no = 6;  // 主板编号 (FMainBoardNo)
+  string item_no = 7;  // 位号 (FItemNo)
+  string work_section = 8;  // 工段 (FWorkSection，可为空)
+
+  // 测试范围与参数
+  string out_fac_range = 9;  // 出厂范围 (FOutFacRange)
+  string test_range = 10;  // 测试范围 (FTestRange)
+  int32 max_pressure = 11;  // 最大压力 (FMaxPressure)
+  int64 icmo = 12;  // ICMO编号 (FICMO)
+  double acctory = 13;  // 工厂参数 (Facctory)
+  string connect_name = 14;  // 连接名称 (FConnectName，可为空)
+  bool meter_yn = 15;  // 是否带仪表 (FMeterYN，1=是/true，0=否/false)
+  string static_yn = 16;  // 静态标识 (FStaticYN)
+
+  // 外观与功能测试结果
+  string appearance = 17;  // 外观检测结果 (Wappearance)
+  string but_function = 18;  // 按钮功能检测结果 (WButFunction)
+  string meter_display = 19;  // 仪表显示检测结果 (WMeterDisplay)
+  string conm_function = 20;  // 连接功能检测结果 (Wconmfunction)
+
+  // 性能测试结果
+  string sairtig = 21;  // 气密性检测结果 (Sairtig)
+  string sin_strength = 22;  // 强度检测结果 (Sinstrength)
+  string sin_resistance = 23;  // 电阻检测结果 (Sinresistance)
+  double input_static_0 = 24;  // 静态输入0值 (Jinputstatic0，可为空)
+  double input_static_100 = 25;  // 静态输入100值 (Jinputstatic100，可为空)
+  double output_static_0 = 26;  // 静态输出0值 (Joutputstatic0，可为空)
+  double output_static_100 = 27;  // 静态输出100值 (Joutputstatic100，可为空)
+  double allowance = 28;  // 允许误差 (Jallowance)
+  double measure_max = 29;  // 最大测量值 (Jmeasurelmax，可为空)
+  string conclusion = 30;  // 结论 (Jfconclusion，可为空)
+
+  // 输入测试数据
+  string test_unit = 31;  // 测试单位 (ZTestUnit)
+  double input_test_0 = 32;  // 输入测试0%值 (ZInPutTest0)
+  double input_test_25 = 33;  // 输入测试25%值 (ZInPutTest25)
+  double input_test_50 = 34;  // 输入测试50%值 (ZInPutTest50)
+  double input_test_75 = 35;  // 输入测试75%值 (ZInPutTest75)
+  double input_test_100 = 36;  // 输入测试100%值 (ZInPutTest100)
+
+  // 升压测试数据
+  double press_test_up_0 = 37;  // 升压测试0%值 (ZPressTestUp0)
+  double press_test_up_25 = 38;  // 升压测试25%值 (ZPressTestUp25)
+  double press_test_up_50 = 39;  // 升压测试50%值 (ZPressTestUp50)
+  double press_test_up_75 = 40;  // 升压测试75%值 (ZPressTestUp75)
+  double press_test_up_100 = 41;  // 升压测试100%值 (ZPressTestUp100)
+
+  // 降压测试数据
+  double press_test_down_0 = 42;  // 降压测试0%值 (ZPressTestDown0)
+  double press_test_down_25 = 43;  // 降压测试25%值 (ZPressTestDown25)
+  double press_test_down_50 = 44;  // 降压测试50%值 (ZPressTestDown50)
+  double press_test_down_75 = 45;  // 降压测试75%值 (ZPressTestDown75)
+  double press_test_down_100 = 46;  // 降压测试100%值 (ZPressTestDown100)
+
+  // 工厂校验数据
+  double factory_allowance = 47;  // 工厂允许误差 (Zfactoryallowance)
+  double factory_measured_max = 48;  // 工厂实测最大值 (Zfactorymeasuredmax)
+  double factory_hysteresis = 49;  // 工厂滞后值 (Zfactoryhgstersis)
+  double factory_hysteresis_max = 50;  // 工厂最大滞后值 (Zfactoryhgstersismax)
+  int32 factory = 51;  // 工厂标识 (Zfactory)
+
+  // 测试元数据
+  string operator = 52;  // 操作员 (TOperator)
+  string test_date = 53;  // 测试时间 (TTestDate，格式：yyyy-MM-dd HH:mm:ss.SSS)
+  string pack_check = 54;  // 包装检查结果 (TPackCheck，可为空)
+  string end_test_result = 55;  // 最终测试结果 (EndTestResult，可为空)
+  string end_inspector_sig = 56;  // 检验员签名 (EndInspectorsig，可为空)
+  string end_confirmor_sig = 57;  // 确认人签名 (EndConfirmorsig，可为空)
+  string print_time = 58;  // 打印时间 (PPrintTime，可为空)
+
+  // 单位信息
+  string factory_allowance_unit = 59;  // 工厂允许误差单位 (ZfactoryallowanceUnit)
+  string end_test_unit = 60;  // 最终测试单位 (ZEndtestUnit)
+
+  // 信号参数
+  int32 jitter = 61;  // 抖动值 (Jitter)
+  int32 sig_level_min = 62;  // 最小信号电平 (Siglevelmin)
+  int32 sig_level_max = 63;  // 最大信号电平 (Siglevelmax)
+}
